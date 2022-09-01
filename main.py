@@ -4,8 +4,8 @@ import os
 import dictdiffer
 from time import sleep
 
-base_dir = 'C:/Users/zubko/Desktop/'
-main_path = base_dir + 'docx'
+base_dir = 'C:/Users/zubko/Desktop/insideFolderForConnection/'
+main_path = base_dir + 'excel'
 # print(requests.post('http://127.0.0.1:5000/upload', files={'document': file}, params={'login': 'zubkov', 'password': '12345'}).text)
 # print(requests.post('http://127.0.0.1:5000/equalTree', params={'login': 'zubkov', 'password': '12345'}, json=tree).text)
 # print(requests.get('http://127.0.0.1:5000/getTree', params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).text)
@@ -16,9 +16,18 @@ tree = directory_tree.path_to_dict(main_path)
 
 timeUpdate = 5
 
+def isExistFolder(path):
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
+    return requests.get('http://127.0.0.1:5000/isExistFolder',
+                       params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}).json()
+
 def syncingWithServer(path):
     base_dir = path[:path.rfind('/')+1]
     dir = path.replace(base_dir, '')
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print('Created!')
     tree = directory_tree.path_to_dict(path)
     equlsTree = requests.post('http://127.0.0.1:5000/equalTree', params={'login': 'zubkov', 'password': '12345'}, json=tree).json()
     server_files_sizes = requests.get('http://127.0.0.1:5000/getFilesSize', params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}).json()
@@ -177,9 +186,22 @@ def createFolders(path):
                             params={'login': 'zubkov', 'password': '12345', 'path': path_to_db}).text)
 # print(createFolders(main_path))
 
-def start():
-    syncingWithServer(main_path)
-    detectChangesInFolder(main_path)
+def start(path):
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
+    if isExistFolder(path):
+        serverLTM = requests.get('http://127.0.0.1:5000/getLastTimeModification',
+                                params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}, json=tree).json()
+        localLTM = getLastTimeModification(path)
+        if localLTM > serverLTM:
+            uploadAllFiles(path)
+            createFolders(path)
+        else:
+            syncingWithServer(path)
+    else:
+        uploadAllFiles(path)
+        createFolders(path)
+    detectChangesInFolder(path)
 
-start()
+start(main_path)
 
