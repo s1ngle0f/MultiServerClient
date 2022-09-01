@@ -4,8 +4,8 @@ import os
 import dictdiffer
 from time import sleep
 
-base_dir = 'C:/Users/zubko/Desktop/insideFolderForConnection/'
-main_path = base_dir + 'excel'
+base_dir = 'C:/Users/zubko/Desktop/'
+main_path = base_dir + 'pwpt'
 # print(requests.post('http://127.0.0.1:5000/upload', files={'document': file}, params={'login': 'zubkov', 'password': '12345'}).text)
 # print(requests.post('http://127.0.0.1:5000/equalTree', params={'login': 'zubkov', 'password': '12345'}, json=tree).text)
 # print(requests.get('http://127.0.0.1:5000/getTree', params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).text)
@@ -203,5 +203,5 @@ def start(path):
         createFolders(path)
     detectChangesInFolder(path)
 
-start(main_path)
+# start(main_path)
 
