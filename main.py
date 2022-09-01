@@ -4,15 +4,17 @@ import os
 import dictdiffer
 from time import sleep
 
-base_dir = 'C:/Users/zubko/Desktop/'
-main_path = base_dir + 'pwpt'
-# print(requests.post('http://127.0.0.1:5000/upload', files={'document': file}, params={'login': 'zubkov', 'password': '12345'}).text)
-# print(requests.post('http://127.0.0.1:5000/equalTree', params={'login': 'zubkov', 'password': '12345'}, json=tree).text)
-# print(requests.get('http://127.0.0.1:5000/getTree', params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).text)
-# print(requests.post('http://127.0.0.1:5000/deleteNonExistentFoldersOrFiles', params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}, json=tree).text)
+# base_dir = 'C:/Users/zubko/Desktop/'
+# main_path = base_dir + 'pwpt'
+# print(requests.post('http://127.0.0.1:5000/upload', files={'document': file}, params={'login': LOGIN, 'password': '12345'}).text)
+# print(requests.post('http://127.0.0.1:5000/equalTree', params={'login': LOGIN, 'password': '12345'}, json=tree).text)
+# print(requests.get('http://127.0.0.1:5000/getTree', params={'login': LOGIN, 'password': '12345', 'folder_name': 'docx'}).text)
+# print(requests.post('http://127.0.0.1:5000/deleteNonExistentFoldersOrFiles', params={'login': LOGIN, 'password': '12345', 'folder_name': 'docx'}, json=tree).text)
 
-filename = main_path + 'doc.docx'
-tree = directory_tree.path_to_dict(main_path)
+# filename = main_path + 'doc.docx'
+# tree = directory_tree.path_to_dict(main_path)
+
+LOGIN = 'zubkov'
 
 timeUpdate = 5
 
@@ -20,7 +22,7 @@ def isExistFolder(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     return requests.get('http://127.0.0.1:5000/isExistFolder',
-                       params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}).json()
+                       params={'login': LOGIN, 'password': '12345', 'folder_name': dir}).json()
 
 def syncingWithServer(path):
     base_dir = path[:path.rfind('/')+1]
@@ -29,8 +31,8 @@ def syncingWithServer(path):
         os.makedirs(path)
         print('Created!')
     tree = directory_tree.path_to_dict(path)
-    equlsTree = requests.post('http://127.0.0.1:5000/equalTree', params={'login': 'zubkov', 'password': '12345'}, json=tree).json()
-    server_files_sizes = requests.get('http://127.0.0.1:5000/getFilesSize', params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}).json()
+    equlsTree = requests.post('http://127.0.0.1:5000/equalTree', params={'login': LOGIN, 'password': '12345'}, json=tree).json()
+    server_files_sizes = requests.get('http://127.0.0.1:5000/getFilesSize', params={'login': LOGIN, 'password': '12345', 'folder_name': dir}).json()
     client_files_sizes = directory_tree.get_files_folder_and_size(path, base_dir)
     print(server_files_sizes)
     print(client_files_sizes)
@@ -45,14 +47,14 @@ def syncingWithServer(path):
                     print('CHANGE:', base_dir + diff[1][0])
                     tmp = diff[1][0]
                 file = requests.get('http://127.0.0.1:5000/getFile',
-                                    params={'login': 'zubkov', 'password': '12345', 'folder_name': '', 'path': tmp},
+                                    params={'login': LOGIN, 'password': '12345', 'folder_name': '', 'path': tmp},
                                     json=tree)
                 with open(base_dir + tmp, 'wb') as f:
                     f.write(file.content)
     else:
         #удаление ненужных файлов и папок
         server_files = requests.get('http://127.0.0.1:5000/getFilesArray',
-                                    params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).json()
+                                    params={'login': LOGIN, 'password': '12345', 'folder_name': 'docx'}).json()
         local_files = directory_tree.get_files_folder(path, base_dir)
         remove_list = compareLists(local_files, server_files)['remove']
         add_list = compareLists(local_files, server_files)['add']
@@ -72,7 +74,7 @@ def syncingWithServer(path):
         #         os.makedirs(base_dir + file_path)
         #     else:
         #         file = requests.get('http://127.0.0.1:5000/getFile',
-        #                             params={'login': 'zubkov', 'password': '12345', 'folder_name': '', 'path': file_path},
+        #                             params={'login': LOGIN, 'password': '12345', 'folder_name': '', 'path': file_path},
         #                             json=tree)
         #         with open(base_dir + file_path, 'wb') as f:
         #             f.write(file.content)
@@ -106,15 +108,15 @@ def detectChangesInFolder(path):
                     if file_path[0].find('.') != -1:
                         with open(base_dir + file_path[0], 'rb') as file:
                             print(requests.post('http://127.0.0.1:5000/upload', files={'document': file},
-                                                params={'login': 'zubkov', 'password': '12345', 'path': file_path[0]}).text)
+                                                params={'login': LOGIN, 'password': '12345', 'path': file_path[0]}).text)
                     else:
                         print(requests.post('http://127.0.0.1:5000/createFolders',
-                                            params={'login': 'zubkov', 'password': '12345', 'path': file_path[0]}).text)
+                                            params={'login': LOGIN, 'password': '12345', 'path': file_path[0]}).text)
             elif diff[0] == 'remove':
                 for file_path in diff[2]:
                     print('REMOVE:', base_dir + file_path[0])
                     print(requests.get('http://127.0.0.1:5000/delete',
-                                       params={'login': 'zubkov', 'password': '12345', 'path': file_path[0]}).text)
+                                       params={'login': LOGIN, 'password': '12345', 'path': file_path[0]}).text)
             elif diff[0] == 'change':
                 if type(diff[1]) == str and diff[1].find('.') != -1:
                     print('CHANGE:', base_dir + diff[1])
@@ -124,12 +126,12 @@ def detectChangesInFolder(path):
                     tmp = diff[1][0]
                 with open(base_dir + tmp, 'rb') as file:
                     print(requests.post('http://127.0.0.1:5000/upload', files={'document': file},
-                                        params={'login': 'zubkov', 'password': '12345', 'path': tmp}).text)
+                                        params={'login': LOGIN, 'password': '12345', 'path': tmp}).text)
         last_scan = scan
         sleep(timeUpdate)
 # detectChangesInFolder(main_path)
 
-# print(requests.get('http://127.0.0.1:5000/getLastTimeModification', params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).text)
+# print(requests.get('http://127.0.0.1:5000/getLastTimeModification', params={'login': LOGIN, 'password': '12345', 'folder_name': 'docx'}).text)
 # print(getLastTimeModification(main_path))
 
 def getLastTimeModification(path):
@@ -139,8 +141,9 @@ def getLastTimeModification(path):
     return sorted(scan.values())[-1]
 
 def getMissingFiles(dir, base_dir):
+    tree = directory_tree.path_to_dict(base_dir+dir)
     recieve = requests.post('http://127.0.0.1:5000/getListOfMissingObjects',
-                            params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}, json=tree).json()
+                            params={'login': LOGIN, 'password': '12345', 'folder_name': dir}, json=tree).json()
     print(recieve)
     for i in recieve:
         isFile = str(i).rfind('.') != -1
@@ -149,7 +152,7 @@ def getMissingFiles(dir, base_dir):
             os.makedirs(base_dir + dir + i)
         else:
             file = requests.get('http://127.0.0.1:5000/getFile',
-                                params={'login': 'zubkov', 'password': '12345', 'folder_name': dir, 'path': i}, json=tree)
+                                params={'login': LOGIN, 'password': '12345', 'folder_name': dir, 'path': i}, json=tree)
             with open(base_dir + dir + i, 'wb') as f:
                 f.write(file.content)
 
@@ -167,7 +170,7 @@ def uploadAllFiles(path):
         path_to_db = file.replace(base_dir, '')
         with open(file, 'rb') as file:
             print(requests.post('http://127.0.0.1:5000/upload', files={'document': file},
-                                params={'login': 'zubkov', 'password': '12345', 'path': path_to_db}).text)
+                                params={'login': LOGIN, 'password': '12345', 'path': path_to_db}).text)
 
 # uploadAllFiles(main_path)
 
@@ -183,15 +186,16 @@ def createFolders(path):
         path_to_db = dir.replace(base_dir, '')
         # print(path_to_db)
         print(requests.post('http://127.0.0.1:5000/createFolders',
-                            params={'login': 'zubkov', 'password': '12345', 'path': path_to_db}).text)
+                            params={'login': LOGIN, 'password': '12345', 'path': path_to_db}).text)
 # print(createFolders(main_path))
 
 def start(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
+    tree = directory_tree.path_to_dict(path)
     if isExistFolder(path):
         serverLTM = requests.get('http://127.0.0.1:5000/getLastTimeModification',
-                                params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}, json=tree).json()
+                                params={'login': LOGIN, 'password': '12345', 'folder_name': dir}, json=tree).json()
         localLTM = getLastTimeModification(path)
         if localLTM > serverLTM:
             uploadAllFiles(path)

@@ -3,6 +3,7 @@ from main import start
 
 folders = [
     'C:/Users/zubko/Desktop/docx',
+    'C:/Users/zubko/Desktop/insideFolderForConnection/excel',
     'C:/Users/zubko/Desktop/pwpt'
 ]
 
