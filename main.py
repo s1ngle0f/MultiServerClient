@@ -36,7 +36,7 @@ def syncingWithServer(path):
                     print('CHANGE:', base_dir + diff[1][0])
                     tmp = diff[1][0]
                 file = requests.get('http://127.0.0.1:5000/getFile',
-                                    params={'login': 'zubkov', 'password': '12345', 'folder_name': dir, 'path': tmp.replace(dir, '')},
+                                    params={'login': 'zubkov', 'password': '12345', 'folder_name': '', 'path': tmp},
                                     json=tree)
                 with open(base_dir + tmp, 'wb') as f:
                     f.write(file.content)
