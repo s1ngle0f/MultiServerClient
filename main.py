@@ -41,7 +41,7 @@ def syncingWithServer(path):
                 with open(base_dir + tmp, 'wb') as f:
                     f.write(file.content)
     else:
-        #Сначала надо сделать удаление ненужных файлов и папок
+        #удаление ненужных файлов и папок
         server_files = requests.get('http://127.0.0.1:5000/getFilesArray',
                                     params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).json()
         local_files = directory_tree.get_files_folder(path, base_dir)
@@ -67,7 +67,7 @@ def syncingWithServer(path):
         #                             json=tree)
         #         with open(base_dir + file_path, 'wb') as f:
         #             f.write(file.content)
-        getMissingFiles(dir)
+        getMissingFiles(dir, base_dir)
         print('SYNC!')
 
 def compareLists(first, second):
@@ -83,7 +83,8 @@ def compareLists(first, second):
             'remove': remove}
 
 def detectChangesInFolder(path):
-    global base_dir
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
     last_scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
     while True:
         scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
@@ -123,10 +124,12 @@ def detectChangesInFolder(path):
 # print(getLastTimeModification(main_path))
 
 def getLastTimeModification(path):
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
     scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
     return sorted(scan.values())[-1]
 
-def getMissingFiles(dir):
+def getMissingFiles(dir, base_dir):
     recieve = requests.post('http://127.0.0.1:5000/getListOfMissingObjects',
                             params={'login': 'zubkov', 'password': '12345', 'folder_name': dir}, json=tree).json()
     print(recieve)
@@ -144,6 +147,8 @@ def getMissingFiles(dir):
 # getMissingFiles()
 
 def uploadAllFiles(path):
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
     filelist = []
     for root, dirs, files in os.walk(path):
         for file in files:
@@ -158,6 +163,8 @@ def uploadAllFiles(path):
 # uploadAllFiles(main_path)
 
 def createFolders(path):
+    base_dir = path[:path.rfind('/') + 1]
+    dir = path.replace(base_dir, '')
     dirlist = []
     for root, dirs, files in os.walk(path):
         for dir in dirs:

@@ -20,6 +20,9 @@ def path_to_dict_with_time(path):
     return d
 
 def path_to_dict_with_path(path, base_dir = ''):
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     d = {'name': os.path.basename(path)}
     if os.path.isdir(path):
         d['type'] = "directory"
@@ -30,6 +33,9 @@ def path_to_dict_with_path(path, base_dir = ''):
     return d
 
 def path_to_dict_with_time_and_path(path, base_dir = ''):
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     d = {'name': os.path.basename(path)}
     if os.path.isdir(path):
         d['type'] = "directory"
@@ -53,6 +59,9 @@ def get_files_and_time_full_path(path, d = None):
 def get_files_and_time(path, base_dir = '', d = None):
     if d == None:
         d = {}
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     if not os.path.isdir(path):
         if os.path.basename(path.replace('\\', '/').replace(base_dir, ''))[0:2] != '~$':
             d[path.replace('\\', '/').replace(base_dir, '')] = os.path.getmtime(path)
@@ -64,6 +73,9 @@ def get_files_and_time(path, base_dir = '', d = None):
 def get_files_folder_and_time(path, base_dir = '', d = None):
     if d == None:
         d = {}
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     if not os.path.isdir(path):
         if os.path.basename(path.replace('\\', '/').replace(base_dir, ''))[0:2] != '~$':
             d[path.replace('\\', '/').replace(base_dir, '')] = os.path.getmtime(path)
@@ -77,6 +89,9 @@ def get_files_folder_and_time(path, base_dir = '', d = None):
 def get_files_folder_and_size(path, base_dir = '', d = None):
     if d == None:
         d = {}
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     if not os.path.isdir(path):
         if os.path.basename(path.replace('\\', '/').replace(base_dir, ''))[0:2] != '~$':
             d[path.replace('\\', '/').replace(base_dir, '')] = os.path.getsize(path)
@@ -88,6 +103,9 @@ def get_files_folder_and_size(path, base_dir = '', d = None):
 def get_files_folder(path, base_dir = '', d = None):
     if d == None:
         d = []
+    if base_dir == '':
+        base_dir = path[:path.rfind('/') + 1]
+        dir = path.replace(base_dir, '')
     if not os.path.isdir(path):
         if os.path.basename(path.replace('\\', '/').replace(base_dir, ''))[0:2] != '~$':
             d.append(path.replace('\\', '/').replace(base_dir, ''))
