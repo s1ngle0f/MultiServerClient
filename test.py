@@ -1,10 +1,27 @@
+import time
+
 import directory_tree
 import requests
 import dictdiffer
+from threading import Thread
 
 
-base_dir = 'C:/Users/zubko/Desktop/'
-main_path = base_dir + 'docx'
+# base_dir = 'C:/Users/zubko/Desktop/'
+# main_path = base_dir + 'docx'
+
+def thread(d):
+    while True:
+        print(d['k'])
+        time.sleep(3)
+
+d = {"k": 'v'}
+
+th = Thread(target=thread, args=(d,))
+th.start()
+
+while True:
+    d['k'] += 'v'
+    time.sleep(3)
 
 print()
 
