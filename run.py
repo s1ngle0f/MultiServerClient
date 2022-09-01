@@ -55,6 +55,13 @@ def updateSettings():
 
 updateSettings()
 
+MAIN_DIRECTORIES = list(settings['directories'])
+
+for i in MAIN_DIRECTORIES:
+    th = Thread(target=start, args=(i, MAIN_DIRECTORIES))
+    # threads[i] = th
+    th.start()
+
 def deleteDirectoryFromSettings(path):
     global directories_el
     with open(settings_path, 'r+') as f:
@@ -67,7 +74,7 @@ def deleteDirectoryFromSettings(path):
         f.seek(0)  # <--- should reset file position to the beginning.
         json.dump(data, f, indent=4)
         f.truncate()  # remove remaining part
-
+    MAIN_DIRECTORIES.remove(path)
     print(path)
 
 def createPaths():
@@ -100,6 +107,7 @@ def addDirectoryToSettings(path):
         f.seek(0)  # <--- should reset file position to the beginning.
         json.dump(data, f, indent=4)
         f.truncate()  # remove remaining part
+    MAIN_DIRECTORIES.append(path)
     createPaths()
 
 def chooseDir():
@@ -147,11 +155,6 @@ createPaths()
 #         for k, v in threads.items():
 #             if k not in settings['directories']:
 #                 v.
-
-for i in settings['directories']:
-    th = Thread(target=start, args=(i,))
-    # threads[i] = th
-    th.start()
 
 window.mainloop()
 

@@ -94,11 +94,12 @@ def compareLists(first, second):
     return {'add': add,
             'remove': remove}
 
-def detectChangesInFolder(path):
+def detectChangesInFolder(path, directories):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     last_scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
-    while True:
+    while path in directories:
+        print(directories)
         scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
         # print(scan)
         for diff in list(dictdiffer.diff(last_scan, scan)):
@@ -130,6 +131,7 @@ def detectChangesInFolder(path):
                                         params={'login': LOGIN, 'password': '12345', 'path': tmp}).text)
         last_scan = scan
         sleep(timeUpdate)
+    print(path, 'was stopped!')
 # detectChangesInFolder(main_path)
 
 # print(requests.get('http://127.0.0.1:5000/getLastTimeModification', params={'login': LOGIN, 'password': '12345', 'folder_name': 'docx'}).text)
@@ -190,7 +192,7 @@ def createFolders(path):
                             params={'login': LOGIN, 'password': '12345', 'path': path_to_db}).text)
 # print(createFolders(main_path))
 
-def start(path):
+def start(path, directories):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     tree = directory_tree.path_to_dict(path)
@@ -206,7 +208,7 @@ def start(path):
     else:
         uploadAllFiles(path)
         createFolders(path)
-    detectChangesInFolder(path)
+    detectChangesInFolder(path, directories)
 
 # start(main_path)
 

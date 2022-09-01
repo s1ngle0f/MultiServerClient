@@ -14,13 +14,21 @@ def thread(d):
         print(d['k'])
         time.sleep(3)
 
-d = {"k": 'v'}
+def thread_arr(a):
+    while True:
+        print(a)
+        time.sleep(3)
 
-th = Thread(target=thread, args=(d,))
+d = {"k": 'v'}
+a = ['v']
+
+# th = Thread(target=thread, args=(d,))
+th = Thread(target=thread_arr, args=(a,))
 th.start()
 
 while True:
     d['k'] += 'v'
+    a.append('v')
     time.sleep(3)
 
 print()
