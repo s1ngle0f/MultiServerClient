@@ -37,20 +37,7 @@ def syncingWithServer(path):
     print(server_files_sizes)
     print(client_files_sizes)
     if equlsTree['isEquals'] == True:
-        for diff in list(dictdiffer.diff(server_files_sizes, client_files_sizes)):
-            print(diff)
-            if diff[0] == 'change':
-                if type(diff[1]) == str and diff[1].find('.') != -1:
-                    print('CHANGE:', base_dir + diff[1])
-                    tmp = diff[1]
-                elif diff[1][0].find('.') != -1:
-                    print('CHANGE:', base_dir + diff[1][0])
-                    tmp = diff[1][0]
-                file = requests.get('http://127.0.0.1:5000/getFile',
-                                    params={'login': LOGIN, 'password': '12345', 'folder_name': '', 'path': tmp},
-                                    json=tree)
-                with open(base_dir + tmp, 'wb') as f:
-                    f.write(file.content)
+        pass
     else:
         #удаление ненужных файлов и папок
         server_files = requests.get('http://127.0.0.1:5000/getFilesArray',
@@ -78,6 +65,20 @@ def syncingWithServer(path):
         #                             json=tree)
         #         with open(base_dir + file_path, 'wb') as f:
         #             f.write(file.content)
+        for diff in list(dictdiffer.diff(server_files_sizes, client_files_sizes)):
+            print(diff)
+            if diff[0] == 'change':
+                if type(diff[1]) == str and diff[1].find('.') != -1:
+                    print('CHANGE:', base_dir + diff[1])
+                    tmp = diff[1]
+                elif diff[1][0].find('.') != -1:
+                    print('CHANGE:', base_dir + diff[1][0])
+                    tmp = diff[1][0]
+                file = requests.get('http://127.0.0.1:5000/getFile',
+                                    params={'login': LOGIN, 'password': '12345', 'folder_name': '', 'path': tmp},
+                                    json=tree)
+                with open(base_dir + tmp, 'wb') as f:
+                    f.write(file.content)
         getMissingFiles(dir, base_dir)
         print('SYNC!')
 
