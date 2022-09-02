@@ -1,6 +1,8 @@
 {
     "login": "zubkov",
     "directories": [
-        "C:/Users/zubko/Desktop/insideFolderForConnection/excel"
+        "C:/Users/zubko/Desktop/insideFolderForConnection/excel",
+        "C:/Users/zubko/Desktop/docx",
+        "C:/Users/zubko/Desktop/pwpt"
     ]
 }

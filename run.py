@@ -108,7 +108,10 @@ def addDirectoryToSettings(path):
         json.dump(data, f, indent=4)
         f.truncate()  # remove remaining part
     MAIN_DIRECTORIES.append(path)
+    th = Thread(target=start, args=(i, MAIN_DIRECTORIES))
+    th.start()
     createPaths()
+    # tkinter.messagebox.showinfo('ПЕРЕЗАГРУЗИТЕ ПРОГРАММУ!', 'ПЕРЕЗАГРУЗИТЕ ПРОГРАММУ!')
 
 def chooseDir():
     file_name = tkinter.filedialog.askdirectory()
