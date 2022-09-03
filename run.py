@@ -5,6 +5,7 @@ from threading import Thread
 from tkinter import *
 from tkinter import messagebox
 import main
+import requests
 from main import start
 import json
 from functools import partial
@@ -15,11 +16,12 @@ folders = [
     'C:/Users/zubko/Desktop/pwpt'
 ]
 
-main.LOGIN = 'zubkova'
+# main.LOGIN = 'zubkova'
 
 settings_path = os.path.abspath(os.curdir) + '/settings.json'
 
 directories_el = {} #НЕ ТРОГАТЬ
+server_dirs_el = {} #НЕ ТРОГАТЬ
 settings = None
 
 window = Tk()
@@ -53,9 +55,11 @@ def updateSettings():
             settings = json.load(f)
             print(settings)
 
-updateSettings()
 
-MAIN_DIRECTORIES = list(settings['directories'])
+updateSettings()
+main.LOGIN = settings['login']
+MAIN_DIRECTORIES = list(settings['directories']) if settings['directories'] != None else []
+
 
 for i in MAIN_DIRECTORIES:
     th = Thread(target=start, args=(i, MAIN_DIRECTORIES))
@@ -77,6 +81,41 @@ def deleteDirectoryFromSettings(path):
     MAIN_DIRECTORIES.remove(path)
     print(path)
 
+def createNewDir(dir):
+    file_name = tkinter.filedialog.askdirectory()
+    os.makedirs(file_name + '/' + dir)
+    addDirectoryToSettings(file_name + '/' + dir)
+    showServerDirs()
+
+def deleteElements(arr):
+    for i in arr:
+        i.destroy()
+
+def showServerDirs():
+    global directories_el, server_dirs_el
+    for k, v in server_dirs_el.items():
+        deleteElements(k)
+    server_dirs_el.clear()
+    server_dirs = requests.get('http://127.0.0.1:5000/getDirs',
+                               params={'login': main.LOGIN, 'password': '12345'}).json()
+    local_dirs = [os.path.basename(x) for x in settings['directories']]
+    for i, dir in enumerate(main.compareLists(local_dirs, server_dirs)['add']):
+        local_lb = Label(
+            frame,
+            text = dir
+        )
+        local_lb.grid(row=i+1, column=2)
+
+        local_btn = Button(
+            frame,
+            text='+',
+            command=partial(createNewDir, dir),
+            padx=5
+        )
+        local_btn.grid(row=i+1, column=3)
+        server_dirs_el[dir] = [local_lb, local_btn]
+
+
 def createPaths():
     global directories_el
     updateSettings()
@@ -96,7 +135,8 @@ def createPaths():
         )
         local_btn.grid(row=i+1, column=1)
         directories_el[path] = [local_lb, local_btn]
-    # pprint.pprint(directories_el)
+    showServerDirs()
+    # pprint.pprint(main.compareLists(local_dirs, server_dirs))
     return directories_el
 
 def addDirectoryToSettings(path):
@@ -108,10 +148,9 @@ def addDirectoryToSettings(path):
         json.dump(data, f, indent=4)
         f.truncate()  # remove remaining part
     MAIN_DIRECTORIES.append(path)
-    th = Thread(target=start, args=(i, MAIN_DIRECTORIES))
+    th = Thread(target=start, args=(path, MAIN_DIRECTORIES))
     th.start()
     createPaths()
-    # tkinter.messagebox.showinfo('ПЕРЕЗАГРУЗИТЕ ПРОГРАММУ!', 'ПЕРЕЗАГРУЗИТЕ ПРОГРАММУ!')
 
 def chooseDir():
     file_name = tkinter.filedialog.askdirectory()
@@ -131,7 +170,7 @@ height_tf = Entry(
     frame, #Используем нашу заготовку с настроенными отступами.
 )
 height_tf.grid(row=0, column=1)
-height_tf.insert(0, settings['login'])
+height_tf.insert(0, settings['login'] if settings['login'] != None else '')
 
 cal_btn = Button(
     frame,
@@ -149,7 +188,8 @@ choose_btn = Button(
 )
 choose_btn.grid(row=0, column=3)
 
-createPaths()
+if main.LOGIN != None:
+    createPaths()
 
 # threads = {}
 # def threads_controller(threads):
@@ -158,6 +198,14 @@ createPaths()
 #         for k, v in threads.items():
 #             if k not in settings['directories']:
 #                 v.
+
+def on_close():
+    global MAIN_DIRECTORIES
+    MAIN_DIRECTORIES.clear()
+    window.destroy()
+    print('END')
+
+window.protocol("WM_DELETE_WINDOW", on_close)
 
 window.mainloop()
 

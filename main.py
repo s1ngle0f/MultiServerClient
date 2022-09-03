@@ -14,7 +14,7 @@ from time import sleep
 # filename = main_path + 'doc.docx'
 # tree = directory_tree.path_to_dict(main_path)
 
-LOGIN = 'zubkov'
+LOGIN = None
 
 timeUpdate = 5
 
@@ -141,7 +141,7 @@ def getLastTimeModification(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
-    return sorted(scan.values())[-1]
+    return sorted(scan.values())[-1] if len(scan) > 0 else -1
 
 def getMissingFiles(dir, base_dir):
     tree = directory_tree.path_to_dict(base_dir+dir)
