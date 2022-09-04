@@ -3,6 +3,7 @@ import directory_tree
 import os
 import dictdiffer
 from time import sleep
+import json
 
 # base_dir = 'C:/Users/zubko/Desktop/'
 # main_path = base_dir + 'pwpt'
@@ -13,9 +14,10 @@ from time import sleep
 
 # filename = main_path + 'doc.docx'
 # tree = directory_tree.path_to_dict(main_path)
-
-LOGIN = None
-
+settings_path = os.path.dirname(__file__) + '/settings.json'
+with open(settings_path, 'r') as f:
+    data = json.load(f)
+LOGIN = data['login']
 timeUpdate = 5
 
 def isExistFolder(path):
@@ -54,17 +56,6 @@ def syncingWithServer(path):
             except:
                 print(base_dir + file_path)
                 print('Error')
-        # for file_path in add_list:
-        #     isFile = str(file_path).rfind('.') != -1
-        #     print(file_path, isFile)
-        #     if not isFile:
-        #         os.makedirs(base_dir + file_path)
-        #     else:
-        #         file = requests.get('http://127.0.0.1:5000/getFile',
-        #                             params={'login': LOGIN, 'password': '12345', 'folder_name': '', 'path': file_path},
-        #                             json=tree)
-        #         with open(base_dir + file_path, 'wb') as f:
-        #             f.write(file.content)
         for diff in list(dictdiffer.diff(server_files_sizes, client_files_sizes)):
             print(diff)
             if diff[0] == 'change':
@@ -94,11 +85,15 @@ def compareLists(first, second):
     return {'add': add,
             'remove': remove}
 
-def detectChangesInFolder(path, directories):
+def detectChangesInFolder(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     last_scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
+    with open(settings_path, 'r') as f:
+        directories = json.load(f)['directories']
     while path in directories:
+        with open(settings_path, 'r') as f:
+            directories = json.load(f)['directories']
         print(directories)
         scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
         # print(scan)
@@ -192,7 +187,7 @@ def createFolders(path):
                             params={'login': LOGIN, 'password': '12345', 'path': path_to_db}).text)
 # print(createFolders(main_path))
 
-def start(path, directories):
+def start(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
     tree = directory_tree.path_to_dict(path)
@@ -208,7 +203,7 @@ def start(path, directories):
     else:
         uploadAllFiles(path)
         createFolders(path)
-    detectChangesInFolder(path, directories)
+    detectChangesInFolder(path)
 
 # start(main_path)
 

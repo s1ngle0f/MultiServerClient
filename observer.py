@@ -12,6 +12,11 @@ time_update = 3
 def run():
     settings_path = os.path.dirname(__file__) + '/settings.json'
     last_data = None
+    with open(settings_path, 'r') as f:
+        data = json.load(f)
+    for dir in data['directories']:
+        th = Thread(target=start, args=(dir,))
+        th.start()
     while WORK:
         with open(settings_path, 'r') as f:
             data = json.load(f)
