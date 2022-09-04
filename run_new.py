@@ -2,9 +2,11 @@ import observer
 import json
 import os
 
-def checkExisting():
-    settings_path = os.path.dirname(__file__) + '/settings.json'
+settings_path = os.path.dirname(__file__) + '/settings.json'
 
+IS_WORK = False
+
+def checkExisting():
     with open(settings_path, 'r') as f:
         data = json.load(f)
 
@@ -19,7 +21,15 @@ def checkExisting():
 
 
 def run():
-    checkExisting()
-    observer.run()
+    if not os.path.exists(settings_path):
+        with open(settings_path, 'w', encoding='utf-8') as f:
+            data = {'login': None, 'directories': []}
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    with open(settings_path, 'r') as f:
+        data = json.load(f)
+    if data['login'] != None and data['login'] != '':
+        IS_WORK = True
+        checkExisting()
+        observer.run()
 
 # run()
