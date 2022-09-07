@@ -7,10 +7,11 @@ import pystray
 from pystray import MenuItem as item
 from PIL import Image, ImageTk
 from threading import Thread
+import context_menu
 
+context_menu.create_registers()
 
 settings_path = os.path.dirname(__file__) + '/settings.json'
-
 window = Tk()
 window.title('MultiFolder')
 window.geometry('300x100')
