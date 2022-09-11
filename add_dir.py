@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-settings_path = os.path.dirname(__file__) + '/settings.json'
+settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
 
 path = os.getcwd().replace('\\', '/').replace('//', '/')
 

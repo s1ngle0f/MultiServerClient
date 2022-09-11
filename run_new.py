@@ -2,7 +2,7 @@ import observer
 import json
 import os
 
-settings_path = os.path.dirname(__file__) + '/settings.json'
+settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
 
 IS_WORK = False
 
@@ -21,6 +21,7 @@ def checkExisting():
 
 
 def run():
+    global IS_WORK
     if not os.path.exists(settings_path):
         with open(settings_path, 'w', encoding='utf-8') as f:
             data = {'login': None, 'directories': []}

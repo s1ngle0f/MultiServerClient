@@ -1,4 +1,6 @@
 import dictdiffer
+import os
+import json
 import directory_tree
 a = {'children': [
               {'children': [{'name': 'docccss.docx',
@@ -131,6 +133,8 @@ b = {'children': [
 
 base_dir = 'C:/Users/zubko/Desktop/'
 main_path = base_dir + 'docx'
+settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
+
 
 def findDifferentForSending(last_tree, current_tree):
     change = []
@@ -176,8 +180,16 @@ def findDifferentForSending(last_tree, current_tree):
 # print(findDifferentForSending(a, b))
 
 # print(directory_tree.get_files_and_time_full_path(main_path))
-print(directory_tree.get_files_and_time(main_path, base_dir=base_dir))
+# print(directory_tree.get_files_and_time(main_path, base_dir=base_dir))
 
 # last_scan = {}
 # if last_scan == None:
 #     print(123)
+
+if not os.path.exists(settings_path):
+    if not os.path.exists(settings_path[:settings_path.rfind('/')]):
+        os.makedirs(settings_path[:settings_path.rfind('/')])
+    with open(settings_path, 'w', encoding='utf-8') as f:
+        data = {'login': None, 'directories': []}
+        json.dump(data, f, ensure_ascii=False, indent=4)
+        settings = data

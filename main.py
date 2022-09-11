@@ -14,7 +14,7 @@ import json
 
 # filename = main_path + 'doc.docx'
 # tree = directory_tree.path_to_dict(main_path)
-settings_path = os.path.dirname(__file__) + '/settings.json'
+settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
 with open(settings_path, 'r') as f:
     data = json.load(f)
 LOGIN = data['login']

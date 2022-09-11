@@ -12,7 +12,8 @@ def add_current_folder():
         key = reg.CreateKeyEx(reg.HKEY_CLASSES_ROOT, key_path)
         reg.SetValue(key, '', reg.REG_SZ, 'Add Current Folder')
         key_command = reg.CreateKeyEx(key, r'command')
-        reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\add_dir.py') #не для билда
+        # reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\add_dir.py') #не для билда
+        reg.SetValue(key_command, '', reg.REG_SZ, os.getenv('APPDATA') + '\\MultiFolder' + '\\add_dir.exe')
 # add_current_folder()
 
 def delete_current_folder():
@@ -25,7 +26,8 @@ def delete_current_folder():
         key = reg.CreateKeyEx(reg.HKEY_CLASSES_ROOT, key_path)
         reg.SetValue(key, '', reg.REG_SZ, 'Delete Current Folder')
         key_command = reg.CreateKeyEx(key, r'command')
-        reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\delete_dir.py') #не для билда
+        # reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\delete_dir.py') #не для билда
+        reg.SetValue(key_command, '', reg.REG_SZ, os.getenv('APPDATA') + '\\MultiFolder' + '\\delete_dir.exe')
 # delete_current_folder()
 
 def get_folder_from_server():
@@ -38,7 +40,8 @@ def get_folder_from_server():
         key = reg.CreateKeyEx(reg.HKEY_CLASSES_ROOT, key_path)
         reg.SetValue(key, '', reg.REG_SZ, 'Get Folder From Server')
         key_command = reg.CreateKeyEx(key, r'command')
-        reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\get_folder_from_server.py') #не для билда
+        # reg.SetValue(key_command, '', reg.REG_SZ, sys.executable + ' ' + os.path.dirname(__file__) + '\\get_folder_from_server.py') #не для билда
+        reg.SetValue(key_command, '', reg.REG_SZ, os.getenv('APPDATA') + '\\MultiFolder' + '\\get_folder_from_server.exe')
 # get_folder_from_server()
 
 def create_registers():

@@ -10,7 +10,7 @@ WORK = True
 time_update = 3
 
 def run():
-    settings_path = os.path.dirname(__file__) + '/settings.json'
+    settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
     last_data = None
     with open(settings_path, 'r') as f:
         data = json.load(f)

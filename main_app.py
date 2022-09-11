@@ -11,7 +11,7 @@ import context_menu
 
 context_menu.create_registers()
 
-settings_path = os.path.dirname(__file__) + '/settings.json'
+settings_path = os.getenv('APPDATA') + '/MultiFolder/settings.json'
 window = Tk()
 window.title('MultiFolder')
 window.geometry('300x100')
@@ -38,6 +38,8 @@ def edit_login():
 def updateSettings():
     global settings
     if not os.path.exists(settings_path):
+        if not os.path.exists(settings_path[:settings_path.rfind('/')]):
+            os.makedirs(settings_path[:settings_path.rfind('/')])
         with open(settings_path, 'w', encoding='utf-8') as f:
             data = {'login': None, 'directories': []}
             json.dump(data, f, ensure_ascii=False, indent=4)
