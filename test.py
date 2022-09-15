@@ -24,6 +24,8 @@ def thread_arr(a):
 d = {"k": 'v'}
 a = ['v']
 
+print(requests.get('http://127.0.0.1:5000/getListSettingsApp').json())
+
 # th = Thread(target=thread, args=(d,))
 # th = Thread(target=thread_arr, args=(a,))
 # th.start()
@@ -33,9 +35,9 @@ a = ['v']
 #     a.append('v')
 #     time.sleep(3)
 
-print(os.path.dirname(__file__) + '\\')
-print(os.path.basename(__file__))
-print(sys.executable)
+# print(os.path.dirname(__file__) + '\\')
+# print(os.path.basename(__file__))
+# print(sys.executable)
 
 # server_files = requests.get('http://127.0.0.1:5000/getFilesArray',
 #                    params={'login': 'zubkov', 'password': '12345', 'folder_name': 'docx'}).json()

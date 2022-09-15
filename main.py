@@ -20,6 +20,8 @@ with open(settings_path, 'r') as f:
 LOGIN = data['login']
 timeUpdate = 5
 
+APP_WORK = True
+
 def isExistFolder(path):
     base_dir = path[:path.rfind('/') + 1]
     dir = path.replace(base_dir, '')
@@ -91,7 +93,7 @@ def detectChangesInFolder(path):
     last_scan = directory_tree.get_files_folder_and_time(path, base_dir=base_dir)
     with open(settings_path, 'r') as f:
         directories = json.load(f)['directories']
-    while path in directories:
+    while path in directories and APP_WORK:
         with open(settings_path, 'r') as f:
             directories = json.load(f)['directories']
         print(directories)

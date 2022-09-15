@@ -2,6 +2,10 @@ import tkinter.filedialog
 from tkinter import *
 import os
 import json
+
+import requests
+
+import main
 import run_new
 import pystray
 from pystray import MenuItem as item
@@ -48,6 +52,13 @@ def updateSettings():
         with open(settings_path, 'r', encoding='utf-8') as f:
             settings = json.load(f)
             # print(settings)
+    list_settings_files = list(requests.get('http://127.0.0.1:5000/getListSettingsApp').json())
+    for i in list_settings_files:
+        if not os.path.exists(os.getenv('APPDATA') + '/MultiFolder/' + i):
+            file = requests.get('http://127.0.0.1:5000/getSettingsApp',
+                                params={'app_name': i})
+            with open(os.getenv('APPDATA') + '/MultiFolder/' + i, 'wb') as f:
+                f.write(file.content)
 updateSettings()
 
 height_lb = Label(
@@ -73,21 +84,22 @@ cal_btn.grid(row=0, column=2)
 
 # Define a function for quit the window
 def quit_window(icon, item):
-   icon.stop()
-   window.destroy()
+    main.APP_WORK = False
+    icon.stop()
+    window.destroy()
 
 # Define a function to show the window again
 def show_window(icon, item):
-   icon.stop()
-   window.after(0, window.deiconify)
+    icon.stop()
+    window.after(0, window.deiconify)
 
 # Hide the window and show on the system taskbar
 def hide_window():
-   window.withdraw()
-   image=Image.open('dolphin.ico')
-   menu=(item('Quit', quit_window), item('Show', show_window))
-   icon=pystray.Icon("name", image, "My System Tray Icon", menu)
-   icon.run()
+    window.withdraw()
+    image=Image.open('dolphin.ico')
+    menu=(item('Quit', quit_window), item('Show', show_window))
+    icon=pystray.Icon("name", image, "My System Tray Icon", menu)
+    icon.run()
 
 window.protocol("WM_DELETE_WINDOW", hide_window)
 
